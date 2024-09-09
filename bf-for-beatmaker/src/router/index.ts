@@ -10,12 +10,22 @@ const checkAuth = (
   let isAuth = false
 
   onAuthStateChanged(getAuth(), (user) => {
-    if (user && !isAuth) {
+    if (user) {
       isAuth = true
-      next()
-    } else if (!user && !isAuth) {
-      isAuth = true
-      next('/auth')
+      if (to.path === '/auth') {
+        // Если пользователь уже аутентифицирован и пытается попасть на страницу /auth, перенаправляем его на главную
+        next('/')
+      } else {
+        next()
+      }
+    } else {
+      isAuth = false
+      if (to.path !== '/auth') {
+        // Если пользователь не аутентифицирован и пытается попасть на защищенную страницу, перенаправляем его на /auth
+        next('/auth')
+      } else {
+        next()
+      }
     }
   })
 }
@@ -30,8 +40,20 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/auth',
     name: 'Auth',
-    component: () => import('@/views/PageAuth.vue')
+    component: () => import('@/views/PageAuth.vue'),
+    beforeEnter: (to, from, next) => {
+      let isAuth = false
+      onAuthStateChanged(getAuth(), (user) => {
+        if (user) {
+          // Если пользователь уже аутентифицирован, перенаправляем на главную
+          next('/')
+        } else {
+          next()
+        }
+      })
+    }
   },
+
   {
     path: '/application/:id',
     name: 'Application',

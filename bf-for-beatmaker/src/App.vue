@@ -6,7 +6,6 @@ import AppHeader from '@/components/AppHeader.vue'
 
 const userStore = useUserStore()
 const isLoading = ref<boolean>(true)
-
 onMounted(() => {
   onAuthStateChanged(getAuth(), (user) => {
     if (user) {
