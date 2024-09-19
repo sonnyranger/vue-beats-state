@@ -55,9 +55,9 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
-    path: '/application/:id',
-    name: 'Application',
-    component: () => import('@/views/PageApplication.vue'),
+    path: '/interview/:id',
+    name: 'Interview',
+    component: () => import('@/views/PageInterview.vue'),
     beforeEnter: checkAuth
   },
   {
