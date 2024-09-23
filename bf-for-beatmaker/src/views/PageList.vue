@@ -7,7 +7,8 @@ import {
   orderBy,
   getDocs,
   deleteDoc,
-  doc
+  doc,
+  where
 } from 'firebase/firestore'
 
 import type { IInterview } from '@/interfaces'
@@ -20,12 +21,37 @@ const confirm = useConfirm()
 
 const interviews = ref<IInterview[]>([])
 const isLoading = ref<boolean>(true)
+const selectedFilterResult = ref<string>('')
 
-const getAllInterviews = async <T extends IInterview>(): Promise<T[]> => {
-  const getData = query(
-    collection(db, `users/${userStore.userId}/interviews`),
-    orderBy('createdAt', 'desc')
-  )
+const submitFilter = async (): Promise<void> => {
+  isLoading.value = true
+  const listInterviews: Array<IInterview> = await getAllInterviews(true)
+  interviews.value = listInterviews
+  isLoading.value = false
+}
+
+const clearFilter = async (): Promise<void> => {
+  isLoading.value = true
+  const listInterviews: Array<IInterview> = await getAllInterviews()
+  interviews.value = listInterviews
+  isLoading.value = false
+}
+const getAllInterviews = async <T extends IInterview>(isFilter?: boolean): Promise<T[]> => {
+  let getData
+
+  if (isFilter) {
+    getData = query(
+      collection(db, `users/${userStore.userId}/interviews`),
+      orderBy('createdAt', 'desc'),
+      where('result', '==', selectedFilterResult.value)
+    )
+  } else {
+    getData = query(
+      collection(db, `users/${userStore.userId}/interviews`),
+      orderBy('createdAt', 'desc')
+    )
+  }
+
   const listDocs = await getDocs(getData)
   return listDocs.docs.map((doc) => {
     return doc.data() as T
@@ -34,7 +60,7 @@ const getAllInterviews = async <T extends IInterview>(): Promise<T[]> => {
 
 onMounted(async () => {
   const listInterviews: Array<IInterview> = await getAllInterviews()
-  interviews.value = [...listInterviews]
+  interviews.value = listInterviews
   isLoading.value = false
 })
 
@@ -67,6 +93,36 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
     </app-message>
     <div v-else>
       <h1>Список отправленных инструменталов</h1>
+      <div class="flex align-items-center mb-5">
+        <div class="flex align-items-center mr-2">
+          <app-radio
+            v-model="selectedFilterResult"
+            inputId="interviewResult1"
+            name="result"
+            value="Refusal"
+          />
+          <label class="ml-2" for="interviewResult1">Отказ</label>
+        </div>
+        <div class="flex align-items-center mr-2">
+          <app-radio
+            v-model="selectedFilterResult"
+            inputId="interviewResult2"
+            name="result"
+            value="Offer"
+          />
+          <label class="ml-2" for="interviewResult2">Оффер</label>
+        </div>
+        <app-button class="mr-2" @click="submitFilter" :disabled="!selectedFilterResult"
+          >Применить</app-button
+        >
+        <app-button
+          class="mr-2"
+          severity="danger"
+          :disabled="!selectedFilterResult"
+          @click="clearFilter"
+          >Сбросить</app-button
+        >
+      </div>
       <app-datatable :value="interviews">
         <app-column field="company" header="Артист"></app-column>
         <app-column field="hrName" header="Контакт менеджера"></app-column>
@@ -75,31 +131,33 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
             <a :href="slotProps.data.vacancyLink" target="_blank">Ссылка на вакансию</a>
           </template>
         </app-column>
-        <app-column class="flex justify-content-center" field="contactTelegram" header="Контакты">
+        <app-column header="Контакты">
           <template #body="slotProps">
-            <a
-              v-if="slotProps.data.contactTelegram"
-              :href="`https://t.me/${slotProps.data.contactTelegram}`"
-              target="_blank"
-            >
-              <span class="contacts__icon contacts__telegram pi pi-telegram"></span>
-            </a>
-            <a
-              v-if="slotProps.data.contactWhatsApp"
-              :href="`https://wa.me/${slotProps.data.contactWhatsApp}`"
-              target="_blank"
-            >
-              <span class="contacts__icon contacts__whatsapp pi pi-whatsapp"></span>
-            </a>
+            <div class="contacts">
+              <a
+                v-if="slotProps.data.contactTelegram"
+                :href="`https://t.me/${slotProps.data.contactTelegram}`"
+                target="_blank"
+              >
+                <span class="contacts__icon contacts__telegram pi pi-telegram"></span>
+              </a>
+              <a
+                v-if="slotProps.data.contactWhatsApp"
+                :href="`https://wa.me/${slotProps.data.contactWhatsApp}`"
+                target="_blank"
+              >
+                <span class="contacts__icon contacts__whatsapp pi pi-whatsapp"></span>
+              </a>
 
-            <a
-              v-if="slotProps.data.contactPhone"
-              :href="`tel:${slotProps.data.contactPhone}`"
-              target="_blank"
-              class="contacts__phone"
-            >
-              <span class="contacts__icon pi pi-phone"></span>
-            </a>
+              <a
+                v-if="slotProps.data.contactPhone"
+                :href="`tel:${slotProps.data.contactPhone}`"
+                target="_blank"
+                class="contacts__phone"
+              >
+                <span class="contacts__icon pi pi-phone"></span>
+              </a>
+            </div>
           </template>
         </app-column>
         <app-column header="Пройденные этапы">
@@ -169,7 +227,7 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
   color: #371777;
 }
 .contacts__icon {
-  margin: 10px;
+  font-size: 20px;
 }
 .interview-stages {
   display: flex;

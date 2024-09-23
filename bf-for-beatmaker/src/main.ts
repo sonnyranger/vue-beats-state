@@ -1,5 +1,7 @@
 import './assets/main.css'
 import Aura from '@primevue/themes/aura'
+import Lara from '@primevue/themes/lara'
+import Nora from '@primevue/themes/nora'
 
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
@@ -27,6 +29,7 @@ import Calendar from 'primevue/calendar'
 import RadioButton from 'primevue/radiobutton'
 import Badge from 'primevue/badge'
 import Tooltip from 'primevue/tooltip'
+import Chart from 'primevue/chart'
 
 import { initializeApp } from 'firebase/app'
 
@@ -48,7 +51,7 @@ app.use(createPinia())
 app.use(router)
 app.use(PrimeVue, {
   theme: {
-    preset: Aura
+    preset: Lara
   }
 })
 app.directive('tooltip', Tooltip)
@@ -67,5 +70,6 @@ app.component('app-textarea', Textarea)
 app.component('app-calendar', Calendar)
 app.component('app-radio', RadioButton)
 app.component('app-badge', Badge)
+app.component('app-chart', Chart)
 
 app.mount('#app')
