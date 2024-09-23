@@ -72,9 +72,7 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
         <app-column field="hrName" header="Контакт менеджера"></app-column>
         <app-column field="vacancyLink" header="Ссылка на паблик">
           <template #body="slotProps">
-            <a :href="slotProps.data.vacancyLink" target="_blank">{{
-              slotProps.data.vacancyLink
-            }}</a>
+            <a :href="slotProps.data.vacancyLink" target="_blank">Ссылка на вакансию</a>
           </template>
         </app-column>
         <app-column class="flex justify-content-center" field="contactTelegram" header="Контакты">
@@ -102,6 +100,37 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
             >
               <span class="contacts__icon pi pi-phone"></span>
             </a>
+          </template>
+        </app-column>
+        <app-column header="Пройденные этапы">
+          <template #body="slotProps">
+            <span v-if="!slotProps.data.stages">Не заполнено</span>
+            <div v-else class="interview-stages">
+              <app-badge
+                v-for="(stage, i) in slotProps.data.stages"
+                :key="i"
+                :value="i + 1"
+                rounded
+                v-tooltip.top="stage.name"
+              />
+            </div>
+          </template>
+        </app-column>
+        <app-column header="Зарплатная вилка">
+          <template #body="slotProps">
+            <span v-if="!slotProps.data.salaryFrom">Не заполнено</span>
+            <span v-else>{{ slotProps.data.salaryFrom }} - {{ slotProps.data.salaryTo }}</span>
+          </template>
+        </app-column>
+        <app-column header="Результат">
+          <template #body="slotProps">
+            <span v-if="!slotProps.data.result">Не заполнено</span>
+            <template v-else>
+              <app-badge
+                :severity="slotProps.data.result === 'Offer' ? 'success' : 'danger'"
+                :value="slotProps.data.result === 'Offer' ? 'Оффер' : 'Отказ'"
+              ></app-badge>
+            </template>
           </template>
         </app-column>
         <app-column>
@@ -140,7 +169,10 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
   color: #371777;
 }
 .contacts__icon {
-  font-size: 20px;
   margin: 10px;
+}
+.interview-stages {
+  display: flex;
+  gap: 5px;
 }
 </style>
