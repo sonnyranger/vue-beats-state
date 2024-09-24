@@ -29,15 +29,9 @@ const items = ref<IMenuItem[]>([
     show: computed((): boolean => !!userStore.userId)
   },
   {
-    label: 'Список отправленных инструменталов',
+    label: 'Список заявок',
     icon: 'pi pi-list',
     path: '/list',
-    show: computed((): boolean => !!userStore.userId)
-  },
-  {
-    label: 'Статистика',
-    icon: 'pi pi-chart-pie',
-    path: '/statistic',
     show: computed((): boolean => !!userStore.userId)
   }
 ])

@@ -66,7 +66,7 @@ onMounted(async () => {
 
 const confirmRemoveInterview = async (id: string): Promise<void> => {
   confirm.require({
-    message: 'Вы действительно хотите удалить инструментал?',
+    message: 'Вы действительно хотите удалить заявку?',
     header: 'Подтвердите действие',
     icon: 'pi pi-info-circle',
     rejectLabel: 'Отмена',
@@ -87,12 +87,12 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
 <template>
   <div>
     <app-dialog />
-    <app-progress v-if="isLoading" />
+    <app-progress class="flex justify-content-center" v-if="isLoading" />
     <app-message v-else-if="!isLoading && interviews.length === 0" severity="info">
-      Нет отправленных инструменталов
+      Нет заявок
     </app-message>
     <div v-else>
-      <h1>Список отправленных инструменталов</h1>
+      <h1>Список заявок</h1>
       <div class="flex align-items-center mb-5">
         <div class="flex align-items-center mr-2">
           <app-radio
@@ -101,7 +101,7 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
             name="result"
             value="Refusal"
           />
-          <label class="ml-2" for="interviewResult1">Отказ</label>
+          <label class="ml-2" for="interviewResult1">Отклонено</label>
         </div>
         <div class="flex align-items-center mr-2">
           <app-radio
@@ -110,7 +110,7 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
             name="result"
             value="Offer"
           />
-          <label class="ml-2" for="interviewResult2">Оффер</label>
+          <label class="ml-2" for="interviewResult2">Принято</label>
         </div>
         <app-button class="mr-2" @click="submitFilter" :disabled="!selectedFilterResult"
           >Применить</app-button
@@ -124,11 +124,11 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
         >
       </div>
       <app-datatable :value="interviews">
-        <app-column field="company" header="Артист"></app-column>
-        <app-column field="hrName" header="Контакт менеджера"></app-column>
-        <app-column field="vacancyLink" header="Ссылка на паблик">
+        <app-column field="artist" header="Артист"></app-column>
+        <app-column field="managerName" header="Контакт менеджера"></app-column>
+        <app-column field="publicLink" header="Ссылка на паблик VK">
           <template #body="slotProps">
-            <a :href="slotProps.data.vacancyLink" target="_blank">Ссылка на вакансию</a>
+            <a :href="slotProps.data.publicLink" target="_blank">Ссылка на паблик</a>
           </template>
         </app-column>
         <app-column header="Контакты">
@@ -168,13 +168,14 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
                 v-for="(stage, i) in slotProps.data.stages"
                 :key="i"
                 :value="i + 1"
+                severity="warn"
                 rounded
                 v-tooltip.top="stage.name"
               />
             </div>
           </template>
         </app-column>
-        <app-column header="Зарплатная вилка">
+        <app-column header="Бюджет на продвижение">
           <template #body="slotProps">
             <span v-if="!slotProps.data.salaryFrom">Не заполнено</span>
             <span v-else>{{ slotProps.data.salaryFrom }} - {{ slotProps.data.salaryTo }}</span>
@@ -182,11 +183,11 @@ const confirmRemoveInterview = async (id: string): Promise<void> => {
         </app-column>
         <app-column header="Результат">
           <template #body="slotProps">
-            <span v-if="!slotProps.data.result">Не заполнено</span>
+            <app-badge v-if="!slotProps.data.result" value="Ожидание" severity="info"></app-badge>
             <template v-else>
               <app-badge
                 :severity="slotProps.data.result === 'Offer' ? 'success' : 'danger'"
-                :value="slotProps.data.result === 'Offer' ? 'Оффер' : 'Отказ'"
+                :value="slotProps.data.result === 'Offer' ? 'Принято' : 'Отклонено'"
               ></app-badge>
             </template>
           </template>

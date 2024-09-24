@@ -68,22 +68,22 @@ onMounted(async () => {
   <app-progress v-if="isLoading" />
   <div v-else-if="interview?.id && !isLoading" class="content-interview">
     <app-card>
-      <template #title>Cобеседование в компанию {{ interview.company }}</template>
+      <template #title>Редактирование заявки артиста {{ interview.artist }}</template>
       <template #content>
         <div class="flex flex-column gap-2">
-          <label for="company">Компания</label>
-          <app-input-text class="input mb-3" id="company" v-model="interview.company" />
+          <label for="artist">Артист</label>
+          <app-input-text class="input mb-3" id="artist" v-model="interview.artist" />
         </div>
         <div class="flex flex-column gap-2">
-          <label for="vacancyLink">Описание вакансии</label>
-          <app-input-text class="input mb-3" id="vacancyLink" v-model="interview.vacancyLink" />
+          <label for="publicLink">Ссылка на паблик VK</label>
+          <app-input-text class="input mb-3" id="publicLink" v-model="interview.publicLink" />
         </div>
         <div class="flex flex-column gap-2">
-          <label for="hrName">Контакт</label>
-          <app-input-text class="input mb-3" id="hrName" v-model="interview.hrName" />
+          <label for="managerName">Контакт (имя)</label>
+          <app-input-text class="input mb-3" id="managerName" v-model="interview.managerName" />
         </div>
         <div class="flex flex-column gap-2">
-          <label for="contactTelegram">Telegram username</label>
+          <label for="contactTelegram">Telegram</label>
           <app-input-text
             class="input mb-3"
             id="contactTelegram"
@@ -106,14 +106,14 @@ onMounted(async () => {
           <div class="flex-auto">
             <app-input-number
               inputId="salaryFrom"
-              placeholder="Зарплатная вилка от"
+              placeholder="Бюджет на продвижение от"
               v-model="interview.salaryFrom"
             />
           </div>
           <div class="flex-auto">
             <app-input-number
               inputId="salaryTo"
-              placeholder="Зарплатная вилка до"
+              placeholder="Бюджет на продвижение до"
               v-model="interview.salaryTo"
             />
           </div>
@@ -167,7 +167,7 @@ onMounted(async () => {
               name="result"
               value="Refusal"
             />
-            <label class="ml-2" for="interviewResult1">Отказ</label>
+            <label class="ml-2" for="interviewResult1">Отклонено</label>
           </div>
           <div class="flex align-items-center">
             <app-radio
@@ -176,7 +176,7 @@ onMounted(async () => {
               name="result"
               value="Offer"
             />
-            <label class="ml-2" for="interviewResult1">Оффер</label>
+            <label class="ml-2" for="interviewResult1">Принято</label>
           </div>
         </div>
         <app-button @click="saveInterview" label="Сохранить" severity="info" icon="pi pi-save" />

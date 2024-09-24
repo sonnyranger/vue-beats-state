@@ -19,12 +19,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <app-progress v-if="isLoading" />
-    <div v-else class="container">
-      <AppHeader />
-      <div class="content">
-        <RouterView />
+  <div class="app">
+    <div class="container">
+      <app-progress class="spinner" v-if="isLoading" />
+      <div v-else>
+        <AppHeader />
+        <div class="content">
+          <RouterView />
+        </div>
       </div>
     </div>
   </div>
@@ -35,5 +37,12 @@ onMounted(() => {
   max-width: 1200px;
   margin: auto;
   padding: 20px;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

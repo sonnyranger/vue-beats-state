@@ -65,12 +65,6 @@ const routes: RouteRecordRaw[] = [
     name: 'List',
     component: () => import('@/views/PageList.vue'),
     beforeEnter: checkAuth
-  },
-  {
-    path: '/statistic',
-    name: 'Statistic',
-    component: () => import('@/views/PageStatistic.vue'),
-    beforeEnter: checkAuth
   }
 ]
 

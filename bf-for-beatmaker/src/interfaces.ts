@@ -1,8 +1,8 @@
 export interface IInterview {
   id: string
-  company: string
-  vacancyLink: string
-  hrName: string
+  artist: string
+  publicLink: string
+  managerName: string
   contactTelegram?: string
   contactWhatsApp?: string
   contactPhone?: string
